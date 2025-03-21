@@ -1,53 +1,41 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 # Токен вашего бота
-TOKEN = "8031208842:AAGBsKCHg6BVk-VJxVt-b8jSYIwCVkAj6e4"
+#7910712224:AAFnV_5qwm6yagEkVCoP3oef4cs1P-a4ObI
+import logging #библиотека для выведения логов (200 == успешно 404 == не найденно )
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-def start(update: Update, context: CallbackContext) -> None:
-        keyboard = [
-            [InlineKeyboardButton("О компании", callback_data='about')],
-            [InlineKeyboardButton("Контакты", callback_data='contacts')],
-            [InlineKeyboardButton("Часы работы", callback_data='work_hours')],
-            [InlineKeyboardButton("Назад", callback_data='back')]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text('Добро пожаловать! Выберите опцию:', reply_markup=reply_markup)
+# У Логина мы обращаемся к basicconfig т.е для выведения логов внутри как атрибуты мы указывает формат который будет 
+# asctime == время запроса  - в какое время произошел / name == имя обджекта / level_name == уровень взаимодействие или взаи модействие с чем / 
+# message == сообщения об ошибке или о успехе (  )
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+
+TOKEN = "7910712224:AAFnV_5qwm6yagEkVCoP3oef4cs1P-a4ObI"
+ADMIN_ID = 901505541  # id админа (мой айди , можно менять на свой или указать списком)
+
+
+
+#async def: Это определение асинхронной функции, что позволяет выполнять операции, не блокируя выполнение других задач.
+# Асинхронные функции используют await для ожидания завершения операций.
+async def start(update: Update, context:ContextTypes.DEFAULT_TYPE) -> None:
+    keyboard = [
+        #Здесь мы создаем список кнопок
+        [InlineKeyboardButton("Общая Информация",callback_data='info')],                #объект InlineKeyboardButton.
+        [InlineKeyboardButton("Программы Обучения" , callback_data='programs')],        #Каждая кнопка имеет два параметра:
+        [InlineKeyboardButton("Рассписание Занятий" , callback_data='schedule')],       #Текст кнопки (например, "LOL KEK CHEBUREK").
+        [InlineKeyboardButton ("Контакты",callback_data='contacts')],                   #callback_data: данные, которые будут отправлены боту, когда пользователь нажмет на кнопку.
+        [InlineKeyboardButton("Мероприятия/Новости", callback_data='events')],          #данные мы будем получать обрабатывать и знать на какую кнопку нажал пользователь
+    ]
     
-def button(update: Update, context: CallbackContext) -> None:
-    query = update.callback_query
-    query.answer()
-
-    if query.data == 'about':
-        query.edit_message_text(text="""Описание организации:\n
-                        Наша миссия - предоставлять качественные услуги и решать проблемы клиентов.\n
-                        Цели: развитие, инновации, клиентский сервис.\n
-                        История: основаны в 2000 году.\n
-                        Основные направления: консультации, разработка, поддержка.""")
-
-    elif query.data == 'contacts':
-        query.edit_message_text(text="""Контактная информация:\n
-                        Адрес: ул. Примерная, 1\n
-                        Телефон: 8-800-XXXX-XXXX\n
-                        Электронная почта: info@company.com\n
-                        Социальные сети: @example в Instagram и Facebook.""")
-
-    elif query.data == 'work_hours':
-        query.edit_message_text(text="""Часы работы:\n
-        Пн-Пт: 9:00 - 18:00\n
-        Сб: 10:00 - 14:00\n
-        Вс: выходной.""")
+    
+    #InlineKeyboardMarkup: Этот объект используется для создания разметки клавиатуры, которая будет отправлена пользователю. 
+    #Он принимает список кнопок, который мы создали ранее.
+    reply_markup = InlineKeyboardMarkup(keyboard)\
         
-    elif query.data == 'back':
-        start(update, context)
-
-def main():
-    updater = Updater("8187841294:AAEdPWsLupm_LcDE83iiNf71V3o7NZqXp6w")
-    updater.dispatcher.add_handler(CommandHandler("start", start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
-
-    updater.start_polling()
-    updater.idle()
-
-    if __name__ == '__main__':
-        main()
+    #  await: Ожидает завершения операции, чтобы не блокировать выполнение других задач.
+    #update.message.reply_photo: Метод, который отправляет пользователю фотографию.
+    #photo: URL изображения
+    #caption: Текст под изображением 
+    #reply_markup: Передает созданную клавиатуру, чтобы пользователь мог взаимодействовать с ботом
+    await update.message.reply_photo(photo='https://sun9-33.userapi.com/impg/BJ9AYKKFnvbwruq5c2VT-ikraDb0O4s1XG5qvQ/k-m-fQWyA38.jpg?size=1235x966&quality=95&sign=e4db72b83b77d7482e7529c7134f364f&type=album',
+                                    caption='Добро Пожаловать в бота IT CUBE', reply_markup=reply_markup)
