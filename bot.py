@@ -1,41 +1,77 @@
 # Токен вашего бота
 #7910712224:AAFnV_5qwm6yagEkVCoP3oef4cs1P-a4ObI
-import logging #библиотека для выведения логов (200 == успешно 404 == не найденно )
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher import filters
+from aiogram.utils import executor
 
-# У Логина мы обращаемся к basicconfig т.е для выведения логов внутри как атрибуты мы указывает формат который будет 
-# asctime == время запроса  - в какое время произошел / name == имя обджекта / level_name == уровень взаимодействие или взаи модействие с чем / 
-# message == сообщения об ошибке или о успехе (  )
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+# Установите уровень логирования
+logging.basicConfig(level=logging.INFO)
 
+# Создайте экземпляр бота и диспетчера
+API_TOKEN = 'YOUR_API_TOKEN'  # Замените на ваш токен
+bot = Bot(token=API_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
 
-TOKEN = "7910712224:AAFnV_5qwm6yagEkVCoP3oef4cs1P-a4ObI"
-ADMIN_ID = 901505541  # id админа (мой айди , можно менять на свой или указать списком)
+# ID администратора
+ADMIN_ID = 123456789  # Замените на ваш ID
 
+# Стартовое состояние
+@dp.message_handler(commands=['start'])
+async def start_command(message: types.Message):
+    # Отправляем приветственное сообщение и картинку
+    await message.answer_photo(photo='https://example.com/image.jpg', caption='Добро пожаловать в нашего бота!')
+    await main_menu(message.chat.id)
 
+# Главное меню
+async def main_menu(chat_id):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    buttons = ["Общая информация", "Программы обучения", "Расписание занятий", "Контакты", "Мероприятия/Новости"]
+    keyboard.add(*buttons)
+    await bot.send_message(chat_id, "Выберите опцию:", reply_markup=keyboard)
 
-#async def: Это определение асинхронной функции, что позволяет выполнять операции, не блокируя выполнение других задач.
-# Асинхронные функции используют await для ожидания завершения операций.
-async def start(update: Update, context:ContextTypes.DEFAULT_TYPE) -> None:
-    keyboard = [
-        #Здесь мы создаем список кнопок
-        [InlineKeyboardButton("Общая Информация",callback_data='info')],                #объект InlineKeyboardButton.
-        [InlineKeyboardButton("Программы Обучения" , callback_data='programs')],        #Каждая кнопка имеет два параметра:
-        [InlineKeyboardButton("Рассписание Занятий" , callback_data='schedule')],       #Текст кнопки (например, "LOL KEK CHEBUREK").
-        [InlineKeyboardButton ("Контакты",callback_data='contacts')],                   #callback_data: данные, которые будут отправлены боту, когда пользователь нажмет на кнопку.
-        [InlineKeyboardButton("Мероприятия/Новости", callback_data='events')],          #данные мы будем получать обрабатывать и знать на какую кнопку нажал пользователь
-    ]
-    
-    
-    #InlineKeyboardMarkup: Этот объект используется для создания разметки клавиатуры, которая будет отправлена пользователю. 
-    #Он принимает список кнопок, который мы создали ранее.
-    reply_markup = InlineKeyboardMarkup(keyboard)\
-        
-    #  await: Ожидает завершения операции, чтобы не блокировать выполнение других задач.
-    #update.message.reply_photo: Метод, который отправляет пользователю фотографию.
-    #photo: URL изображения
-    #caption: Текст под изображением 
-    #reply_markup: Передает созданную клавиатуру, чтобы пользователь мог взаимодействовать с ботом
-    await update.message.reply_photo(photo='https://sun9-33.userapi.com/impg/BJ9AYKKFnvbwruq5c2VT-ikraDb0O4s1XG5qvQ/k-m-fQWyA38.jpg?size=1235x966&quality=95&sign=e4db72b83b77d7482e7529c7134f364f&type=album',
-                                    caption='Добро Пожаловать в бота IT CUBE', reply_markup=reply_markup)
+# Обработка выбора "Общая информация"
+@dp.message_handler(lambda message: message.text == "Общая информация")
+async def general_info(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add("Назад", "Преподаватели")
+    await message.answer("Здесь общая информация.", reply_markup=keyboard)
+
+# Обработка выбора "Назад"
+@dp.message_handler(lambda message: message.text == "Назад")
+async def back_to_main(message: types.Message):
+    await main_menu(message.chat.id)
+
+# Обработка выбора "Преподаватели"
+@dp.message_handler(lambda message: message.text == "Преподаватели")
+async def teachers_info(message: types.Message):
+    # Здесь можно добавить карточки с информацией о преподавателях
+    await message.answer("Карточка 1: Преподаватель 1\nФото: https://example.com/teacher1.jpg")
+    await message.answer("Карточка 2: Преподаватель 2\nФото: https://example.com/teacher2.jpg")
+    await message.answer("Карточка 3: Преподаватель 3\nФото: https://example.com/teacher3.jpg")
+    await message.answer("Карточка 4: Преподаватель 4\nФото: https://example.com/teacher4.jpg")
+    await message.answer("Нажмите 'Назад' для возврата в меню.")
+
+# Обработка выбора "Расписание занятий"
+@dp.message_handler(lambda message: message.text == "Расписание занятий")
+async def schedule_info(message: types.Message):
+    await message.answer_photo(photo='https://example.com/schedule.jpg', caption='Расписание занятий.')
+
+# Обработка выбора "Контакты"
+@dp.message_handler(lambda message: message.text == "Контакты")
+async def contacts_info(message: types.Message):
+    await message.answer_photo(photo='https://example.com/contact.jpg', caption='Контактная информация.')
+
+# Обработка выбора "Мероприятия/Новости"
+@dp.message_handler(lambda message: message.text == "Мероприятия/Новости")
+async def events_info(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add("Назад", "Вперед")
+    await message.answer("Слайдер мероприятий:\n1. Мероприятие 1\n2. Мероприятие 2\n3. Мероприятие 3", reply_markup=keyboard)
+
+# Запуск бота
+if __name__ == '__main__':
+    executor.start_polling(dp, skip_updates=True)
