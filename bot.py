@@ -1,14 +1,14 @@
 # Токен вашего бота
-# 7910712224:AAFnV_5qwm6yagEkVCoP3oef4cs1P-a4ObI
+# 8005793509:AAElxfP9IfkZtPUQb5pWiQ-lEVS2rD_g1S8
 # https://i.pinimg.com/736x/c8/cc/24/c8cc24bba37a25c009647b8875aae0e3.jpg
-# 7787343003:AAFjdUSH7LLmM-Bi-hfgnH8YBbuqdvcHUOM
+# 8005793509:AAElxfP9IfkZtPUQb5pWiQ-lEVS2rD_g1S8
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils import executor
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-API_TOKEN = '7787343003:AAFjdUSH7LLmM-Bi-hfgnH8YBbuqdvcHUOM'
+API_TOKEN = '8005793509:AAElxfP9IfkZtPUQb5pWiQ-lEVS2rD_g1S8'
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
