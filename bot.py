@@ -1,5 +1,3 @@
-# Токен вашего бота
-# 8005793509:AAElxfP9IfkZtPUQb5pWiQ-lEVS2rD_g1S8
 # https://i.pinimg.com/736x/c8/cc/24/c8cc24bba37a25c009647b8875aae0e3.jpg
 # 8005793509:AAElxfP9IfkZtPUQb5pWiQ-lEVS2rD_g1S8
 from aiogram import Bot, Dispatcher, types
