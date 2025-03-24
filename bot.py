@@ -8,7 +8,7 @@ from aiogram.utils import executor
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-API_TOKEN = '8067467035:AAGIyUmiwMnYM0O2k2KbQH8XHY6qDvToD2w'
+API_TOKEN = '8005793509:AAElxfP9IfkZtPUQb5pWiQ-lEVS2rD_g1S8'
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
